@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Redirecting to Hoora...</title>
-    <meta charset="utf-8" />
-    <script type="text/javascript">
-        // این اسکریپت به محض بارگذاری صفحه اجرا می‌شود
-        window.onload = function() {
-            // ۱. پارامترهای 'code' و 'state' را از URL فعلی (URL صفحه وب) می‌خواند
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            const state = urlParams.get('state');
+  <meta charset="utf-8" />
+  <title>Redirecting to Hoora...</title>
+  <script>
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const state = urlParams.get('state');
 
-            // ۲. بررسی می‌کند که آیا 'code' وجود دارد یا خیر
-            if (code) {
-                // ۳. یک URL جدید با اسکیم سفارشی اپلیکیشن شما می‌سازد
-                // و همان 'code' و 'state' را به آن اضافه می‌کند
-                const appUrl = `hoora://login/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
-                
-                // ۴. بلافاصله کاربر را به اپلیکیشن شما هدایت می‌کند
-                window.location.href = appUrl;
+      if (code) {
+        // هماهنگ با intent-filter فعلی: host = bazaar-callback
+        const appUrl = `hoora://bazaar-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
 
-                // (اختیاری) یک پیام برای کاربرانی که اپلیکیشن را ندارند نمایش می‌دهد
-                document.getElementById('message').innerText = 'Trying to open the Hoora app. If it does not open, please make sure the app is installed.';
+        // تلاش برای redirect خودکار
+        window.location.href = appUrl;
 
-            } else {
-                // اگر خطایی وجود داشته باشد، آن را نمایش می‌دهد
-                const error = urlParams.get('error');
-                document.getElementById('message').innerText = `An error occurred: ${error || 'Unknown error'}. Please return to the app and try again.`;
-            }
-        };
-    </script>
+        // در صورت مسدود شدن، لینک قابل کلیک به کاربر نمایش داده می‌شود
+        const link = document.getElementById('open-app');
+        link.href = appUrl;
+        link.style.display = 'inline-block';
+        document.getElementById('message').innerText = 'Trying to open the Hoora app. If it does not open, please click the button below.';
+      } else {
+        const error = urlParams.get('error');
+        document.getElementById('message').innerText = `An error occurred: ${error || 'Unknown error'}.`;
+      }
+    };
+  </script>
+  <style>
+    #open-app { display:none; margin-top: 16px; padding:8px 12px; background:#1976d2; color:white; text-decoration:none; border-radius:4px; }
+  </style>
 </head>
 <body>
-    <h3 id="message">Please wait, redirecting...</h3>
+  <h3 id="message">Please wait, redirecting...</h3>
+  <a id="open-app" href="#">Open Hoora app</a>
 </body>
 </html>
