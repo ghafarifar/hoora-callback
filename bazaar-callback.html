@@ -11,7 +11,8 @@
 
       if (code) {
         // هماهنگ با intent-filter فعلی: host = bazaar-callback
-        const appUrl = `hoora://bazaar-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
+        //const appUrl = `hoora://bazaar-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
+        const appUrl = `hoora://?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
 
         // تلاش برای redirect خودکار
         window.location.href = appUrl;
