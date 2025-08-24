@@ -2,38 +2,58 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Redirecting to Hoora...</title>
+  <title>Hoora Callback</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 90vh; margin: 0; padding: 1em; text-align: center; }
+    a { display: inline-block; margin-top: 20px; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; }
+    .error { color: red; }
+    .code-info { margin-top:15px; font-family: monospace; word-break: break-all; background: #f0f0f0; padding: 10px; border-radius: 4px;}
+  </style>
+</head>
+<body>
+  <h3 id="message">Processing Bazaar Login...</h3>
+  <div id="link-container">
+    <!-- لینک در اینجا توسط جاوااسکریپت ساخته می‌شود -->
+  </div>
+  <div id="code-display" class="code-info" style="display:none;"></div>
+
   <script>
     window.onload = function() {
+      const messageElement = document.getElementById('message');
+      const linkContainerElement = document.getElementById('link-container');
+      const codeDisplayElement = document.getElementById('code-display');
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
       const state = urlParams.get('state');
 
       if (code) {
-        // هماهنگ با intent-filter فعلی: host = bazaar-callback
-        //const appUrl = `hoora://bazaar-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
+        messageElement.innerText = 'Bazaar login successful. Click the link below to return to the app:';
+        
+        // فقط از scheme استفاده می‌کنیم، همانطور که قبلاً توافق کردیم
         const appUrl = `hoora://?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
-
-        // تلاش برای redirect خودکار
-        window.location.href = appUrl;
-
-        // در صورت مسدود شدن، لینک قابل کلیک به کاربر نمایش داده می‌شود
-        const link = document.getElementById('open-app');
+        
+        const link = document.createElement('a');
         link.href = appUrl;
-        link.style.display = 'inline-block';
-        document.getElementById('message').innerText = 'Trying to open the Hoora app. If it does not open, please click the button below.';
+        link.innerText = 'Return to Hoora App';
+        linkContainerElement.appendChild(link);
+
+        codeDisplayElement.innerText = `Callback URL: ${appUrl}`;
+        codeDisplayElement.style.display = 'block';
+
+        // ریدایرکت خودکار حذف شد:
+        // window.location.href = appUrl; 
+
       } else {
         const error = urlParams.get('error');
-        document.getElementById('message').innerText = `An error occurred: ${error || 'Unknown error'}.`;
+        const errorDescription = urlParams.get('error_description');
+        messageElement.innerHTML = `An error occurred during Bazaar login: <br><span class="error">${encodeURIComponent(error || 'Unknown error')}</span>`;
+        if (errorDescription) {
+            messageElement.innerHTML += `<br><span class="error">${encodeURIComponent(errorDescription)}</span>`;
+        }
+        codeDisplayElement.style.display = 'none';
       }
     };
   </script>
-  <style>
-    #open-app { display:none; margin-top: 16px; padding:8px 12px; background:#1976d2; color:white; text-decoration:none; border-radius:4px; }
-  </style>
-</head>
-<body>
-  <h3 id="message">Please wait, redirecting...</h3>
-  <a id="open-app" href="#">Open Hoora app</a>
 </body>
 </html>
