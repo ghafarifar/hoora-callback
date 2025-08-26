@@ -27,11 +27,11 @@
       const code = urlParams.get('code');
       const state = urlParams.get('state');
 
-      if (code && state) { // اطمینان از وجود هم code و هم state
+      if (code) {
         messageElement.innerText = 'Bazaar login successful. Click the link below to return to the app:';
         
-        // **تغییر اصلی اینجاست: اضافه کردن bazaar-callback به عنوان host**
-        const appUrl = `hoora://bazaar-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
+        // فقط از scheme استفاده می‌کنیم، همانطور که قبلاً توافق کردیم
+        const appUrl = `hoora://?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
         
         const link = document.createElement('a');
         link.href = appUrl;
@@ -41,33 +41,16 @@
         codeDisplayElement.innerText = `Callback URL: ${appUrl}`;
         codeDisplayElement.style.display = 'block';
 
-        // ریدایرکت خودکار حذف شده است، که مشکلی ندارد.
+        // ریدایرکت خودکار حذف شد:
         // window.location.href = appUrl; 
 
       } else {
         const error = urlParams.get('error');
         const errorDescription = urlParams.get('error_description');
-        let errorMessage = 'An error occurred during Bazaar login: <br>';
-        
-        if (error) {
-            errorMessage += `<span class="error">Error: ${encodeURIComponent(error)}</span>`;
-        } else if (!code) {
-            errorMessage += `<span class="error">Error: Missing authorization code.</span>`;
-        } else { // !state
-            errorMessage += `<span class="error">Error: Missing state parameter.</span>`;
-        }
-
+        messageElement.innerHTML = `An error occurred during Bazaar login: <br><span class="error">${encodeURIComponent(error || 'Unknown error')}</span>`;
         if (errorDescription) {
-            errorMessage += `<br><span class="error">Details: ${encodeURIComponent(errorDescription)}</span>`;
+            messageElement.innerHTML += `<br><span class="error">${encodeURIComponent(errorDescription)}</span>`;
         }
-        
-        // اگر state در URL خطا وجود داشت، آن را هم می‌توان نمایش داد یا لاگ کرد
-        const errorState = urlParams.get('state');
-        if (errorState){
-             errorMessage += `<br><span class="error">State (if any): ${encodeURIComponent(errorState)}</span>`;
-        }
-
-        messageElement.innerHTML = errorMessage;
         codeDisplayElement.style.display = 'none';
       }
     };
