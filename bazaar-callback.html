@@ -26,25 +26,22 @@
       const state = urlParams.get('state');
 
       if (code) {
-        messageElement.innerText = 'Bazaar login successful. Redirecting to app...';
+        messageElement.innerText = 'ورود موفق! در حال بازگشت به اپلیکیشن...';
         
         const appUrl = `hoora://bazaar-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
         
         const link = document.createElement('a');
         link.href = appUrl;
-        link.innerText = 'Return to Hoora App';
+        link.innerText = 'بازگشت به اپلیکیشن حورا';
         linkContainerElement.appendChild(link);
 
-        codeDisplayElement.innerText = `Callback URL: ${appUrl}`;
-        codeDisplayElement.style.display = 'block';
-
-        // ریدایرکت خودکار و بستن مرورگر
+        // ریدایرکت خودکار
         setTimeout(() => {
           window.location.href = appUrl;
-          // تلاش برای بستن مرورگر
+          // نمایش پیام بستن صفحه
           setTimeout(() => {
-            window.close();
-          }, 1000);
+            messageElement.innerHTML = 'ورود موفق! اکنون میتوانید این صفحه را ببندید.<br><small style="color: #666;">You can now close this page.</small>';
+          }, 2000);
         }, 1500);
 
       } else {
