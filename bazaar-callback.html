@@ -30,8 +30,9 @@
       if (code) {
         messageElement.innerText = 'Bazaar login successful. Click the link below to return to the app:';
         
-        // فقط از scheme استفاده می‌کنیم، همانطور که قبلاً توافق کردیم
-        const appUrl = `hoora://?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
+        // *** تغییر اینجاست ***
+        // host (bazaar-callback) به URL اضافه شد
+        const appUrl = `hoora://bazaar-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
         
         const link = document.createElement('a');
         link.href = appUrl;
@@ -40,9 +41,6 @@
 
         codeDisplayElement.innerText = `Callback URL: ${appUrl}`;
         codeDisplayElement.style.display = 'block';
-
-        // ریدایرکت خودکار حذف شد:
-        // window.location.href = appUrl; 
 
       } else {
         const error = urlParams.get('error');
