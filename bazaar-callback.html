@@ -13,9 +13,7 @@
 </head>
 <body>
   <h3 id="message">Processing Bazaar Login...</h3>
-  <div id="link-container">
-    <!-- لینک در اینجا توسط جاوااسکریپت ساخته می‌شود -->
-  </div>
+  <div id="link-container"></div>
   <div id="code-display" class="code-info" style="display:none;"></div>
 
   <script>
@@ -28,10 +26,8 @@
       const state = urlParams.get('state');
 
       if (code) {
-        messageElement.innerText = 'Bazaar login successful. Click the link below to return to the app:';
+        messageElement.innerText = 'Bazaar login successful. Redirecting to app...';
         
-        // *** تغییر اینجاست ***
-        // host (bazaar-callback) به URL اضافه شد
         const appUrl = `hoora://bazaar-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`;
         
         const link = document.createElement('a');
@@ -41,6 +37,15 @@
 
         codeDisplayElement.innerText = `Callback URL: ${appUrl}`;
         codeDisplayElement.style.display = 'block';
+
+        // ریدایرکت خودکار و بستن مرورگر
+        setTimeout(() => {
+          window.location.href = appUrl;
+          // تلاش برای بستن مرورگر
+          setTimeout(() => {
+            window.close();
+          }, 1000);
+        }, 1500);
 
       } else {
         const error = urlParams.get('error');
